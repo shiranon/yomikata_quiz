@@ -1,0 +1,46 @@
+services:
+  backend: &backend
+    build:
+      context: .
+      dockerfile: docker/development/backend.Dockerfile
+    volumes:
+      - ./backend:/app/backend:cached
+      - backend_tmp:/app/backend/tmp
+      - bundle:/app/backend/vendor
+    working_dir: /app/backend
+    command: bin/rails s -b 0.0.0.0
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/development/frontend.Dockerfile
+      args:
+        - UID=${HOST_UID:-1000}
+    volumes:
+      - ./frontend:/app/frontend:cached
+      - node_modules:/app/frontend/node_modules
+    working_dir: /app/frontend
+    command: yarn dev -p 3001 -H 0.0.0.0
+    ports:
+      - "3001:3001"
+
+volumes:
+  bundle:
+  db_data:
+  node_modules:
+  backend_tmp:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: uid=1000,gid=1000

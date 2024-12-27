@@ -1,0 +1,78 @@
+#!/bin/bash
+
+set -e
+
+export HOST_UID=$(id -u)
+
+# 既存のディレクトリとボリュームをクリーンアップ
+docker compose down -v
+rm -rf backend frontend
+
+# ディレクトリ作成
+mkdir -p backend frontend
+
+# Dockerイメージをビルド
+docker compose build
+
+# node_moduleフォルダのコンフリクトを回避する為に一時compose.ymlを作成
+echo "Next.jsアプリケーションを作成中..."
+cat > docker-compose.init.yml << EOF
+services:
+  frontend-init:
+    build:
+      context: .
+      dockerfile: docker/development/frontend.Dockerfile
+      args:
+        - UID=\${HOST_UID:-1000}
+    volumes:
+      - ./frontend:/app/frontend:cached
+    working_dir: /app/frontend
+EOF
+
+# Next.js作成
+cd frontend
+docker compose -f ../docker-compose.init.yml run --rm frontend-init /bin/bash -c 'create-next-app . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*" --no-git --no-turbopack --use-yarn'
+
+cd ..
+rm docker-compose.init.yml
+
+# フロントエンドの依存関係をインストール
+docker compose run --rm frontend yarn install
+
+# Rails APIモードで作成
+echo "Railsアプリケーションを作成中..."
+cd backend
+docker compose run --rm backend /bin/bash -c 'rails new .  --skip-git --force --api --database=postgresql'
+
+# database.ymlの設定を更新
+cat > config/database.yml << EOF
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: db
+  username: postgres
+  password: password
+
+development:
+  <<: *default
+  database: app_development
+
+test:
+  <<: *default
+  database: app_test
+
+production:
+  <<: *default
+  database: app_production
+EOF
+
+# gitfilesをコピー
+echo "Gitファイルをコピー"
+cp -r ../docker/gitfiles/. .
+
+# DBのセットアップ
+docker compose run --rm backend /bin/bash -c 'bundle exec rails db:prepare'
+cd ..
+
+echo "初期設定が完了しました。"
