@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 import console from 'console'
-import { signIn, signUp } from 'libs/api/auth'
+import { signIn, signUp } from 'libs/api/api-auth'
 import { SigninFormScheme, SignupFormScheme } from 'libs/definitions'
 import { setSession } from 'libs/session'
 import { FormSigninState, FormSignupState } from 'type/form'

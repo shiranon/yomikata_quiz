@@ -13,3 +13,14 @@ User.create!(email: ENV.fetch('ADMIN_EMAIL', nil),
              password: ENV.fetch('ADMIN_PASSWORD', nil),
              admin: true,
              confirmed_at: Time.now)
+
+5.times do
+  user = User.create!(
+    name: Faker::Books::Lovecraft.deity,
+    email: Faker::Internet.email,
+    password: 'foobar',
+    admin: false,
+    confirmed_at: Time.now
+  )
+  puts "\"#{user.username}\" has created!"
+end

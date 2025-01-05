@@ -1,4 +1,6 @@
-# rails api + next.js
+# Yomikata_Quiz
 
-1. 初期設定用スクリプトに実行権限与える。`chmod +x -R ./bin/`  
-2. `bin/init`を実行。
+## 起動
+```
+docker compose up -d
+```

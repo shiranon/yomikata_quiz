@@ -1,6 +1,6 @@
 import { SigninFormScheme, SignupFormScheme } from 'libs/definitions'
 import { deleteSession, getSession } from 'libs/session'
-import client from './client'
+import client from './api-client'
 
 export const signUp = async (formData: FormData) => {
   const validatedFields = SignupFormScheme.parse(Object.fromEntries(formData))
