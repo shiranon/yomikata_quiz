@@ -1,4 +1,4 @@
-import { Colum, DataTable } from 'app/(admin)/_components/dataTable'
+import { Colum, DataTable } from 'app/(admin)/_components/data-table'
 
 export type User = {
   id: number

@@ -17,7 +17,7 @@ export const Side = () => {
         <Link
           className={cn(
             sidebarClass,
-            adminPath === '/admin/user' && selectedClass,
+            adminPath.includes('/admin/user') && selectedClass,
           )}
           href={'/admin/user'}
         >
@@ -26,14 +26,17 @@ export const Side = () => {
         <Link
           className={cn(
             sidebarClass,
-            adminPath === '/admin/index' && selectedClass,
+            adminPath.includes('/admin/index') && selectedClass,
           )}
           href={'/admin/index'}
         >
           <div className="p-4">クイズ</div>
         </Link>
         <Link
-          className={cn(sidebarClass, adminPath === 'title' && selectedClass)}
+          className={cn(
+            sidebarClass,
+            adminPath.includes('/admin/title') && selectedClass,
+          )}
           href={'/admin/title'}
         >
           <div className="p-4">タイトル</div>
@@ -41,7 +44,7 @@ export const Side = () => {
         <Link
           className={cn(
             sidebarClass,
-            adminPath === 'publisher' && selectedClass,
+            adminPath.includes('/admin/publisher') && selectedClass,
           )}
           href={'/admin/publisher'}
         >
@@ -50,7 +53,7 @@ export const Side = () => {
         <Link
           className={cn(
             sidebarClass,
-            adminPath === 'magazine' && selectedClass,
+            adminPath.includes('/admin/magazine') && selectedClass,
           )}
           href={'/admin/magazine'}
         >

@@ -1,4 +1,3 @@
-import { Board } from 'app/(admin)/_components/board'
 import { getUsers } from 'libs/api/api-users'
 import { cachedValidateAuth } from 'libs/auth'
 import { redirect } from 'next/navigation'
@@ -12,9 +11,7 @@ export default async function AdminIndexPage() {
   }
   return (
     <div className="">
-      <Board>
-        <Users users={users.data} />
-      </Board>
+      <Users users={users.data} />
     </div>
   )
 }

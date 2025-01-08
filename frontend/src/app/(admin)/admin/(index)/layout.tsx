@@ -10,7 +10,11 @@ export default async function AdminLayout({
     <div className="p-4">
       <Header />
       <Side />
-      <div className=" ">{children}</div>
+      <div className="flex relative ml-[246px]">
+        <div className="border-4 border-border rounded-e-2xl rounded-b-2xl w-full h-[80vh]">
+          {children}
+        </div>
+      </div>
     </div>
   )
 }

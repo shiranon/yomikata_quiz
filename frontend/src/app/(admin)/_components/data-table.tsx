@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from 'components/ui/button'
+import Link from 'next/link'
 import { useState } from 'react'
 
 export type Colum = {
@@ -79,13 +80,32 @@ export const DataTable = <T extends Record<string, unknown>>({
     return 0
   })
 
-  const tbodyContent = sortedRows.map((row) => {
+  const tbodyContent = sortedRows.map((row, index) => {
     const cells = columns.map((col) => {
       const value = col.field in row ? row[col.field] : ''
       const displayValue = formatValue(value, col.type)
+      if (col.field === 'id') {
+        return (
+          <td key={col.field}>
+            <Link
+              className="ml-1 p-2 bg-primary rounded-md text-white"
+              href={`/admin/user/${row.id}`}
+            >
+              {displayValue}
+            </Link>
+          </td>
+        )
+      }
       return <td key={col.field}>{displayValue}</td>
     })
-    return <tr key={row.id as number}>{cells}</tr>
+    return (
+      <tr
+        className={index % 2 === 0 ? 'bg-secondary' : 'bg-secondary-light'}
+        key={row.id as number}
+      >
+        {cells}
+      </tr>
+    )
   })
 
   return (

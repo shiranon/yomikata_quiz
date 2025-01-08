@@ -52,3 +52,23 @@ export type SigninFormState =
       message?: string
     }
   | undefined
+
+export const UserFormScheme = z.object({
+  name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
+  email: z
+    .string()
+    .email({ message: 'メールアドレスの形式で入力してください' })
+    .trim(),
+  admin: z.preprocess((val) => val === 'on', z.boolean().default(false)),
+})
+
+export type UserFormState =
+  | {
+      errors?: {
+        name?: string[]
+        email?: string[]
+        admin?: string[]
+      }
+      message?: string
+    }
+  | undefined

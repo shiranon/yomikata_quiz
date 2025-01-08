@@ -1,7 +1,6 @@
 'use server'
 
 import axios from 'axios'
-import console from 'console'
 import { signIn, signUp } from 'libs/api/api-auth'
 import { SigninFormScheme, SignupFormScheme } from 'libs/definitions'
 import { setSession } from 'libs/session'
