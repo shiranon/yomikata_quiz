@@ -60,6 +60,12 @@ export function SigninForm() {
               ))}
           </div>
         </div>
+        {state.errors?.login &&
+          state.errors.login.map((error: string, index: number) => (
+            <p className="text-red-400 text-xs pl-3 pb-3" key={index}>
+              {error}
+            </p>
+          ))}
         <div className="flex justify-center">
           <Button
             className="w-1/2"

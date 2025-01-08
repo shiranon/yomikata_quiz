@@ -17,7 +17,7 @@ const formatAuthInfo = (responseData: AuthInfo): AuthInfo => {
 
 const validateAuth = async () => {
   const response = await getCurrentUser()
-  if (!response) return null
+  if (!response || !response.data.isLogin) return null
   return formatAuthInfo(response.data)
 }
 

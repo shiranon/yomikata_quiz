@@ -5,6 +5,7 @@ import console from 'console'
 import { signIn, signUp } from 'libs/api/api-auth'
 import { SigninFormScheme, SignupFormScheme } from 'libs/definitions'
 import { setSession } from 'libs/session'
+import { redirect } from 'next/navigation'
 import { FormSigninState, FormSignupState } from 'type/form'
 
 export async function handleSignUp(
@@ -73,12 +74,7 @@ export async function handleSignIn(
     // サインイン処理
     const response = await signIn(formData)
     await setSession(response)
-
-    return {
-      ...prevState,
-      errors: {},
-      message: 'ログインが完了しました',
-    }
+    return redirect('/admin/index')
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 422) {
       return {

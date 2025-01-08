@@ -1,6 +1,6 @@
 'use client'
 
-import { handleSignUp } from 'libs/action/auth'
+import { handleSignUp } from 'libs/action/action-auth'
 import { useActionState, useState } from 'react'
 import { FormSignupState, FormSignupValues } from 'type/form'
 
