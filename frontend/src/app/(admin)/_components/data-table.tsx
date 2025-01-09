@@ -100,7 +100,7 @@ export const DataTable = <T extends Record<string, unknown>>({
     })
     return (
       <tr
-        className={index % 2 === 0 ? 'bg-secondary' : 'bg-secondary-light'}
+        className={`h-10 ${index % 2 === 0 ? 'bg-secondary' : 'bg-secondary-light'}`}
         key={row.id as number}
       >
         {cells}
