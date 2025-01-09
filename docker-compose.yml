@@ -8,9 +8,9 @@ services:
       - backend_tmp:/app/backend/tmp
       - bundle:/app/backend/vendor
     working_dir: /app/backend
-    command: bin/rails s -b 0.0.0.0
+    command: bin/rails s -b 0.0.0.0 -p 8000
     ports:
-      - "3000:3000"
+      - "8000:8000"
     depends_on:
       - db
 
@@ -20,6 +20,7 @@ services:
       - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
 
   frontend:
     build:
@@ -31,9 +32,9 @@ services:
       - ./frontend:/app/frontend:cached
       - node_modules:/app/frontend/node_modules
     working_dir: /app/frontend
-    command: yarn dev -p 3001 -H 0.0.0.0
+    command: yarn dev -p 3000 -H 0.0.0.0
     ports:
-      - "3001:3001"
+      - "3000:3000"
 
 volumes:
   bundle:
