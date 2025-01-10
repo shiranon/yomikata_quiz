@@ -2,6 +2,21 @@ import { cache } from 'react'
 import { getCurrentUser } from './api/api-auth'
 
 import { AuthInfo } from 'type/auth'
+import { AxiosRequestConfig } from 'axios'
+import { getSession } from './session'
+
+export const setHeaderConfig = async () => {
+  const session = await getSession()
+  const config: AxiosRequestConfig = {
+    headers: {
+      'access-token': session.accessToken,
+      client: session.client,
+      uid: session.uid,
+      'Cache-Control': 'no-cache',
+    },
+  }
+  return config
+}
 
 const formatAuthInfo = (responseData: AuthInfo): AuthInfo => {
   return {

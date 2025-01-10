@@ -1,31 +1,35 @@
 'use client'
 
+import { Publisher } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
+import { ImageUploader } from 'components/ui/image-upload'
 import { Input } from 'components/ui/input'
-import { handleUpdateAdminUser } from 'libs/action/action-user'
-import { deleteUser } from 'libs/api/api-users'
+import { handleUpdateAdminPublisher } from 'libs/action/action-publisher'
+import { deletePublisher } from 'libs/api/api-publishers'
 import { useRouter } from 'next/navigation'
 import { useActionState, useState } from 'react'
-import { User } from 'type/auth'
-import { FormAdminUserState, FormAdminUserValues } from 'type/form'
+import { FormAdminPublisherState, FormAdminPublisherValues } from 'type/form'
 
-export function UserForm({ userData }: { userData: User }) {
-  const initialState: FormAdminUserState = {
+export function PublisherForm({ publisherData }: { publisherData: Publisher }) {
+  const initialState: FormAdminPublisherState = {
     errors: {},
     message: '',
     values: {
-      name: userData.name,
-      email: userData.email,
-      admin: userData.admin,
+      name: publisherData.name,
+      description: publisherData.description,
+      image_url: publisherData.publisherImageUrl,
     },
   }
 
-  const [state, dispatch] = useActionState(handleUpdateAdminUser, initialState)
+  const [state, dispatch] = useActionState(
+    handleUpdateAdminPublisher,
+    initialState,
+  )
 
-  const [formValue, setFormValue] = useState<FormAdminUserValues>({
-    name: userData.name,
-    email: userData.email,
-    admin: userData.admin,
+  const [formValue, setFormValue] = useState<FormAdminPublisherValues>({
+    name: publisherData.name,
+    description: publisherData.description,
+    image_url: publisherData.publisherImageUrl,
   })
 
   const router = useRouter()
@@ -37,9 +41,9 @@ export function UserForm({ userData }: { userData: User }) {
     }
 
     try {
-      const result = await deleteUser(Number(userData.id))
+      const result = await deletePublisher(Number(publisherData.id))
       if (result.success) {
-        router.push('/admin/user')
+        router.push('/admin/publisher')
       } else {
         setError(result.message)
       }
@@ -51,14 +55,14 @@ export function UserForm({ userData }: { userData: User }) {
 
   return (
     <div className="rounded-lg p-5 mx-auto">
-      <h1 className="text-2xl font-bold">ユーザー編集</h1>
+      <h1 className="text-2xl font-bold">出版社編集</h1>
       <form
         className="flex flex-col font-semibold"
         action={dispatch}
         noValidate
       >
         <div className="w-full pt-5 flex items-center">
-          <label className="w-32 text-right pr-2 text-xs" htmlFor="name">
+          <label className="text-right pr-2 text-xs" htmlFor="name">
             名前
           </label>
           <div className="flex flex-wrap">
@@ -80,44 +84,38 @@ export function UserForm({ userData }: { userData: User }) {
           </div>
         </div>
         <div className="w-full pt-5 flex items-center">
-          <label className="w-32 text-right pr-2 text-xs" htmlFor="email">
-            メールアドレス
+          <label className="text-right pr-2 text-xs" htmlFor="description">
+            説明
           </label>
           <div className="flex flex-wrap w-64">
-            <Input
-              className="w-64"
-              type="email"
-              name="email"
-              id="email"
-              value={formValue.email}
+            <textarea
+              className="w-64 h-36 border-2 border-primary rounded-md p-2"
+              name="description"
+              id="description"
+              value={formValue.description}
               onChange={(e) =>
-                setFormValue({ ...formValue, email: e.target.value })
+                setFormValue({ ...formValue, description: e.target.value })
               }
             />
-            {state.errors?.email && (
+            {state.errors?.description && (
               <p className="text-red-400 text-xs pl-3">
-                {state.errors.email[0]}
+                {state.errors.description[0]}
               </p>
             )}
           </div>
         </div>
         <div className="w-full py-5 flex items-center">
-          <label className="w-32 text-right pr-2 text-xs" htmlFor="admin">
-            管理者権限
+          <label className="text-right pr-2 text-xs" htmlFor="image_url">
+            画像
           </label>
           <div className="flex flex-wrap w-64">
-            <Input
-              type="checkbox"
-              name="admin"
-              id="admin"
-              checked={formValue.admin}
-              onChange={(e) =>
-                setFormValue({ ...formValue, admin: e.target.checked })
-              }
+            <ImageUploader
+              previewSize="lg"
+              imageUrl={publisherData.publisherImageUrl}
             />
-            {state.errors?.admin && (
+            {state.errors?.image_url && (
               <p className="text-red-400 text-xs pl-3">
-                {state.errors.admin[0]}
+                {state.errors.image_url[0]}
               </p>
             )}
           </div>

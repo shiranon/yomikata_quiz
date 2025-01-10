@@ -1,14 +1,14 @@
 'use server'
 
-import { FormUserState } from 'app/(admin)/_components/type/form'
 import axios from 'axios'
 import { updateUser } from 'libs/api/api-users'
 import { UserFormScheme } from 'libs/definitions'
+import { FormAdminUserState } from 'type/form'
 
 export async function handleUpdateAdminUser(
-  prevState: FormUserState,
+  prevState: FormAdminUserState,
   formData: FormData,
-): Promise<FormUserState> {
+): Promise<FormAdminUserState> {
   try {
     const validatedFields = UserFormScheme.safeParse(
       Object.fromEntries(formData),

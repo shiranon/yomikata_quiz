@@ -72,3 +72,28 @@ export type UserFormState =
       message?: string
     }
   | undefined
+
+export const PublisherFormScheme = z.object({
+  name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
+  description: z.string().min(2, { message: '説明が短すぎます' }).trim(),
+  image: z
+    .instanceof(File, { message: '画像ファイルを選択してください' })
+    .refine((file) => file.size <= 5000000, {
+      message: 'ファイルサイズは5MB以下にしてください',
+    })
+    .refine(
+      (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+      { message: 'jpeg, png, webp形式の画像を選択してください' },
+    ),
+})
+
+export type PublisherFormState =
+  | {
+      errors?: {
+        name?: string[]
+        description?: string[]
+        image?: string[]
+      }
+      message?: string
+    }
+  | undefined
