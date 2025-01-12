@@ -66,3 +66,6 @@ gem 'dotenv-rails'
 
 # json serializers
 gem 'active_model_serializers'
+
+# 画像の解析
+gem 'ruby-vips'

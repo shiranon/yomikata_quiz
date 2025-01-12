@@ -18,15 +18,32 @@ export const getPublisher = async (id: string) => {
 export const updatePublisher = async (formData: FormData) => {
   const requestUrl = (await headers()).get('x-url')
   const id = requestUrl?.split('/').pop()
-  const validatedFields = PublisherFormScheme.parse(
-    Object.fromEntries(formData),
-  )
+
+  // バリデーション用のオブジェクトを作成
+  const validationData = {
+    name: formData.get('publisher[name]')?.toString() ?? '',
+    description: formData.get('publisher[description]')?.toString() ?? '',
+    publisher_image: formData.get('publisher[publisher_image]') as
+      | File
+      | undefined,
+  }
+
+  // バリデーション実行
+  try {
+    const validatedFields = PublisherFormScheme.parse(validationData)
+    console.log('Validation passed:', validatedFields)
+  } catch (error) {
+    console.error('Validation failed:', error)
+    throw error
+  }
+
   const config = await setHeaderConfig()
-  return client.patch(
-    `/publishers/${id}`,
-    { publisher: validatedFields },
-    config,
-  )
+  config.headers = {
+    ...config.headers,
+    'Content-Type': 'multipart/form-data',
+  }
+
+  return client.patch(`/publishers/${id}`, formData, config)
 }
 
 export const deletePublisher = async (

@@ -8,7 +8,8 @@ module Api
       def publisher_image_url
         return nil unless object.publisher_image.attached?
 
-        image_api_v1_publisher_path(object)
+        # updated_atをキャッシュバスターとして使用
+        "#{image_api_v1_publisher_path(object)}?v=#{object.updated_at.to_i}"
       end
     end
   end

@@ -280,6 +280,7 @@ DEPENDENCIES
   rails (~> 7.1.5, >= 7.1.5.1)
   rubocop
   rubocop-rails
+  ruby-vips
   tzinfo-data
 
 RUBY VERSION

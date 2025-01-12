@@ -1,35 +1,31 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Publisher } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
 import { ImageUploader } from 'components/ui/image-upload'
 import { Input } from 'components/ui/input'
 import { handleUpdateAdminPublisher } from 'libs/action/action-publisher'
 import { deletePublisher } from 'libs/api/api-publishers'
-import { useRouter } from 'next/navigation'
-import { useActionState, useState } from 'react'
-import { FormAdminPublisherState, FormAdminPublisherValues } from 'type/form'
+import { PublisherFormScheme } from 'libs/definitions'
+import { redirect, useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { FormAdminPublisherValues } from 'type/form'
 
 export function PublisherForm({ publisherData }: { publisherData: Publisher }) {
-  const initialState: FormAdminPublisherState = {
-    errors: {},
-    message: '',
-    values: {
+  const [message, setMessage] = useState<string>('')
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormAdminPublisherValues>({
+    resolver: zodResolver(PublisherFormScheme),
+    defaultValues: {
       name: publisherData.name,
       description: publisherData.description,
-      image_url: publisherData.publisherImageUrl,
     },
-  }
-
-  const [state, dispatch] = useActionState(
-    handleUpdateAdminPublisher,
-    initialState,
-  )
-
-  const [formValue, setFormValue] = useState<FormAdminPublisherValues>({
-    name: publisherData.name,
-    description: publisherData.description,
-    image_url: publisherData.publisherImageUrl,
   })
 
   const router = useRouter()
@@ -53,33 +49,36 @@ export function PublisherForm({ publisherData }: { publisherData: Publisher }) {
     }
   }
 
+  const onSubmit = async (data: FormAdminPublisherValues) => {
+    const result = await handleUpdateAdminPublisher(data)
+    if (result.success) {
+      redirect('/admin/index')
+    } else {
+      setMessage(result.message)
+    }
+  }
+
   return (
     <div className="rounded-lg p-5 mx-auto">
       <h1 className="text-2xl font-bold">出版社編集</h1>
       <form
         className="flex flex-col font-semibold"
-        action={dispatch}
+        onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
         <div className="w-full pt-5 flex items-center">
           <label className="text-right pr-2 text-xs" htmlFor="name">
             名前
           </label>
-          <div className="flex flex-wrap">
+          <div className="flex flex-col">
             <Input
-              className="w-64"
+              className="w-96"
               type="text"
-              name="name"
               id="name"
-              value={formValue.name}
-              onChange={(e) =>
-                setFormValue({ ...formValue, name: e.target.value })
-              }
+              {...register('name')}
             />
-            {state.errors?.name && (
-              <p className="text-red-400 text-xs pl-3">
-                {state.errors.name[0]}
-              </p>
+            {errors?.name && (
+              <p className="text-red-400 text-xs pl-3">{errors.name.message}</p>
             )}
           </div>
         </div>
@@ -87,42 +86,39 @@ export function PublisherForm({ publisherData }: { publisherData: Publisher }) {
           <label className="text-right pr-2 text-xs" htmlFor="description">
             説明
           </label>
-          <div className="flex flex-wrap w-64">
+          <div className="flex flex-col">
             <textarea
-              className="w-64 h-36 border-2 border-primary rounded-md p-2"
-              name="description"
+              className="w-96 h-36 border-2 border-primary rounded-md p-2"
               id="description"
-              value={formValue.description}
-              onChange={(e) =>
-                setFormValue({ ...formValue, description: e.target.value })
-              }
+              {...register('description')}
             />
-            {state.errors?.description && (
+            {errors?.description && (
               <p className="text-red-400 text-xs pl-3">
-                {state.errors.description[0]}
+                {errors.description.message}
               </p>
             )}
           </div>
         </div>
         <div className="w-full py-5 flex items-center">
-          <label className="text-right pr-2 text-xs" htmlFor="image_url">
+          <label className="text-right pr-2 text-xs" htmlFor="publisher_image">
             画像
           </label>
-          <div className="flex flex-wrap w-64">
+          <div className="flex flex-col">
             <ImageUploader
               previewSize="lg"
               imageUrl={publisherData.publisherImageUrl}
+              onChange={(file) => setValue('publisher_image', file)}
             />
-            {state.errors?.image_url && (
+            {errors?.publisher_image && (
               <p className="text-red-400 text-xs pl-3">
-                {state.errors.image_url[0]}
+                {errors.publisher_image.message}
               </p>
             )}
           </div>
         </div>
 
-        {state.message && (
-          <p className="text-green-400 text-xs pl-3 pb-3">{state.message}</p>
+        {message && (
+          <p className="text-green-400 text-xs pl-3 pb-3">{message}</p>
         )}
         {error && <p className="text-red-400 text-xs pl-3 pb-3">{error}</p>}
         <div className="flex justify-center gap-5">

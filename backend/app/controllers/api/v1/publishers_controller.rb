@@ -11,6 +11,16 @@ module Api
         render json: publisher, serializer: Api::V1::PublisherSerializer
       end
 
+      def update
+        publisher = Publisher.find(params[:id])
+
+        if publisher.update(publisher_params)
+          render json: publisher, serializer: Api::V1::PublisherSerializer
+        else
+          render json: { errors: publisher.errors }, status: :unprocessable_entity
+        end
+      end
+
       def create
         publisher = Publisher.new(publisher_params)
         if publisher.save

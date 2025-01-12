@@ -1,18 +1,23 @@
 import { cn } from 'libs/utils'
 import Image from 'next/image'
 import { ChangeEvent, useState } from 'react'
-
-interface ImageUploaderProps {
+import { Path, UseFormRegister } from 'react-hook-form'
+interface ImageUploaderProps<T extends { image?: File | null }> {
   className?: string
   previewSize?: 'sm' | 'md' | 'lg'
   imageUrl?: string
+  onChange?: (file: File | null) => void
+  register?: UseFormRegister<T>
+  name?: keyof T
 }
 
-export const ImageUploader = ({
+export const ImageUploader = <T extends { image?: File | null }>({
   className,
   previewSize = 'md',
   imageUrl,
-}: ImageUploaderProps) => {
+  onChange,
+  register,
+}: ImageUploaderProps<T>) => {
   const [preview, setPreview] = useState<string>('')
 
   const previewSizeClass = {
@@ -34,6 +39,9 @@ export const ImageUploader = ({
         setPreview(reader.result as string)
       }
       reader.readAsDataURL(file)
+      onChange?.(file)
+    } else {
+      onChange?.(null)
     }
   }
 
@@ -83,10 +91,13 @@ export const ImageUploader = ({
       <label className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md cursor-pointer hover:opacity-80">
         画像を選択
         <input
+          id="image"
+          name="image"
           type="file"
           className="hidden"
           onChange={handleImageChange}
           accept="image/*"
+          {...(register && register('image' as Path<T>))}
         />
       </label>
     </div>

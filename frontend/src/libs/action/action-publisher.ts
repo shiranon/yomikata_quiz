@@ -1,33 +1,52 @@
 'use server'
 
+import axios from 'axios'
 import { updatePublisher } from 'libs/api/api-publishers'
 import { PublisherFormScheme } from 'libs/definitions'
-import { FormAdminPublisherState } from 'type/form'
+import { z } from 'zod'
+
+type FormValues = z.infer<typeof PublisherFormScheme>
+
+type ActionResponse = {
+  success: boolean
+  message: string
+}
 
 export async function handleUpdateAdminPublisher(
-  prevState: FormAdminPublisherState,
-  formData: FormData,
-): Promise<FormAdminPublisherState> {
+  data: FormValues,
+): Promise<ActionResponse> {
   try {
-    console.log(formData)
-    const validatedFields = PublisherFormScheme.safeParse(
-      Object.fromEntries(formData),
-    )
-    if (!validatedFields.success) {
-      return {
-        ...prevState,
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: 'バリデーションエラーが発生しました',
-      }
+    const formData = new FormData()
+    formData.append('publisher[name]', data.name.trim())
+    formData.append('publisher[description]', data.description.trim())
+
+    if (data.publisher_image instanceof File) {
+      formData.append(
+        'publisher[publisher_image]',
+        data.publisher_image,
+        data.publisher_image.name,
+      )
     }
+
     await updatePublisher(formData)
     return {
-      ...prevState,
-      errors: {},
+      success: true,
       message: '更新が完了しました',
     }
   } catch (error) {
-    console.error('更新エラー:', error)
-    return prevState
+    if (axios.isAxiosError(error) && error.response?.status === 422) {
+      return {
+        success: false,
+        message: 'APIエラーが発生しました',
+      }
+    }
+    console.error('出版社更新エラー:', error)
+    return {
+      success: false,
+      message:
+        error instanceof z.ZodError
+          ? `${error.errors.map((e) => e.message).join(', ')}`
+          : '更新中にエラーが発生しました',
+    }
   }
 }

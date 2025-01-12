@@ -18,9 +18,27 @@ export const getUser = async (id: string) => {
 export const updateUser = async (formData: FormData) => {
   const requestUrl = (await headers()).get('x-url')
   const id = requestUrl?.split('/').pop()
-  const validatedFields = UserFormScheme.parse(Object.fromEntries(formData))
+
+  const validationData = {
+    name: formData.get('name')?.toString() ?? '',
+    email: formData.get('email')?.toString() ?? '',
+    admin: formData.get('admin')?.toString() ?? '',
+  }
+
+  try {
+    const validatedFields = UserFormScheme.parse(validationData)
+    console.log('Validation passed:', validatedFields)
+  } catch (error) {
+    console.error('Validation failed:', error)
+    throw error
+  }
+
   const config = await setHeaderConfig()
-  return client.patch(`/users/${id}`, { user: validatedFields }, config)
+  return client.patch(
+    `/users/${id}`,
+    { user: Object.fromEntries(formData) },
+    config,
+  )
 }
 
 export const deleteUser = async (

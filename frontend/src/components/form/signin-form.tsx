@@ -1,28 +1,35 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from 'components/ui/button'
 import { Input } from 'components/ui/input'
 import { handleSignIn } from 'libs/action/action-auth'
-import { useActionState, useState } from 'react'
-import { FormSigninState, FormSigninValues } from 'type/form'
+import { SigninFormScheme } from 'libs/definitions'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { FormSigninValues } from 'type/form'
 
 export function SigninForm() {
-  const initialState: FormSigninState = {
-    errors: {},
-    message: '',
-    values: {},
-  }
-  const [state, dispatch] = useActionState(handleSignIn, initialState)
+  const [message, setMessage] = useState<string>('')
 
-  const [formValue, setFormValue] = useState<FormSigninValues>({
-    email: '',
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormSigninValues>({
+    resolver: zodResolver(SigninFormScheme),
   })
+
+  const onSubmit = async (data: FormSigninValues) => {
+    const result = await handleSignIn(data)
+    setMessage(result.message)
+  }
 
   return (
     <div className="border-2 border-border rounded-lg p-5 mx-auto">
       <form
         className="flex flex-col font-semibold"
-        action={dispatch}
+        onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
         <div className="w-[320px] pt-5 flex items-center">
@@ -30,18 +37,10 @@ export function SigninForm() {
             メールアドレス
           </label>
           <div className="flex flex-wrap w-52">
-            <Input
-              type="email"
-              name="email"
-              id="email"
-              value={formValue.email}
-              onChange={(e) =>
-                setFormValue({ ...formValue, email: e.target.value })
-              }
-            />
-            {state.errors?.email && (
+            <Input type="email" id="email" {...register('email')} />
+            {errors?.email && (
               <p className="text-red-400 text-xs pl-3">
-                {state.errors.email[0]}
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -51,21 +50,15 @@ export function SigninForm() {
             パスワード
           </label>
           <div className="flex flex-wrap w-52">
-            <Input type="password" name="password" id="password" />
-            {state.errors?.password &&
-              state.errors.password.map((error: string, index: number) => (
-                <p className="text-red-400 text-xs pl-3" key={index}>
-                  {error}
-                </p>
-              ))}
+            <Input type="password" id="password" {...register('password')} />
+            {errors?.password && (
+              <p className="text-red-400 text-xs pl-3">
+                {errors.password.message}
+              </p>
+            )}
           </div>
         </div>
-        {state.errors?.login &&
-          state.errors.login.map((error: string, index: number) => (
-            <p className="text-red-400 text-xs pl-3 pb-3" key={index}>
-              {error}
-            </p>
-          ))}
+        {message && <p className="text-red-400 text-xs pl-3 pb-3">{message}</p>}
         <div className="flex justify-center">
           <Button
             className="w-1/2"

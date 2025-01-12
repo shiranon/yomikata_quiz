@@ -59,7 +59,7 @@ export const UserFormScheme = z.object({
     .string()
     .email({ message: 'メールアドレスの形式で入力してください' })
     .trim(),
-  admin: z.preprocess((val) => val === 'on', z.boolean().default(false)),
+  admin: z.preprocess((val) => val === 'true', z.boolean().default(false)),
 })
 
 export type UserFormState =
@@ -76,15 +76,19 @@ export type UserFormState =
 export const PublisherFormScheme = z.object({
   name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
   description: z.string().min(2, { message: '説明が短すぎます' }).trim(),
-  image: z
-    .instanceof(File, { message: '画像ファイルを選択してください' })
-    .refine((file) => file.size <= 5000000, {
-      message: 'ファイルサイズは5MB以下にしてください',
-    })
-    .refine(
-      (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
-      { message: 'jpeg, png, webp形式の画像を選択してください' },
-    ),
+  publisher_image: z.union([
+    z
+      .instanceof(File, { message: '画像ファイルを選択してください' })
+      .refine((file) => file.size <= 5000000, {
+        message: 'ファイルサイズは5MB以下にしてください',
+      })
+      .refine(
+        (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+        { message: 'jpeg, png, webp形式の画像を選択してください' },
+      ),
+    z.undefined(),
+    z.null(),
+  ]),
 })
 
 export type PublisherFormState =
@@ -92,7 +96,7 @@ export type PublisherFormState =
       errors?: {
         name?: string[]
         description?: string[]
-        image?: string[]
+        publisher_image?: string[]
       }
       message?: string
     }

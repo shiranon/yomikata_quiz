@@ -1,67 +1,30 @@
 type FormSignupValues = {
-  name?: string
-  email?: string
-  password?: string
-  passwordConfirmation?: string
-}
-
-type FormSignupState = {
-  errors: {
-    [key: string]: string[]
-  } | null
-  message: string | null
-  values: FormSignupValues
+  name: string
+  email: string
+  password: string
+  passwordConfirmation: string
 }
 
 type FormSigninValues = {
-  email?: string
-  password?: string
-}
-
-type FormSigninState = {
-  errors: {
-    [key: string]: string[]
-  } | null
-  message: string | null
-  values: FormSigninValues
+  email: string
+  password: string
 }
 
 type FormAdminUserValues = {
-  name?: string
-  email?: string
-  admin?: boolean
-}
-
-type FormAdminUserState = {
-  errors: {
-    [key: string]: string[]
-  } | null
-  message: string | null
-  values: FormAdminUserValues
+  name: string
+  email: string
+  admin: boolean
 }
 
 type FormAdminPublisherValues = {
-  name?: string
-  description?: string
-  image_url?: string
-}
-
-type FormAdminPublisherState = {
-  errors: {
-    [key: string]: string[]
-  } | null
-  message: string | null
-  values: FormAdminPublisherValues
+  name: string
+  description: string
+  publisher_image?: File | null
 }
 
 export type {
-  FormSignupState,
-  FormSignupValues,
-  FormSigninState,
-  FormSigninValues,
-  FormAdminUserState,
-  FormAdminUserValues,
-  FormAdminPublisherState,
   FormAdminPublisherValues,
+  FormAdminUserValues,
+  FormSigninValues,
+  FormSignupValues,
 }
-
