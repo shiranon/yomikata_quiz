@@ -8,6 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+require_relative 'fixtures/constants'
 # 既存のデータを削除
 Publisher.destroy_all
 Magazine.destroy_all
@@ -35,22 +36,7 @@ User.create!(email: ENV.fetch('ADMIN_EMAIL', nil),
 end
 
 # 出版社を作成
-IMAGE_PATHS = {
-  shueisha: Rails.root.join('db/fixtures/images/publisher/shueisha_logo.png'),
-  shonen_jump: Rails.root.join('db/fixtures/images/magazine/shonen_jump_cover.jpg'),
-  hunter_x_hunter: Rails.root.join('db/fixtures/images/comic/hunter_x_hunter_cover.jpg')
-}.freeze
-
-publishers_data = [
-  {
-    name: '集英社',
-    description: '株式会社集英社は、日本の総合出版社。『週刊少年ジャンプ』『週刊プレイボーイ』などの雑誌を発行している。社名は「英知が集う」の意味。',
-    image: IMAGE_PATHS[:shueisha],
-    user_id: 1
-  }
-]
-
-publishers_data.each do |publisher_data|
+PUBLISHER_DATA.each do |publisher_data|
   publisher = Publisher.create!(
     name: publisher_data[:name],
     description: publisher_data[:description],
@@ -64,17 +50,7 @@ publishers_data.each do |publisher_data|
 end
 
 # 雑誌を作成
-magazines_data = [
-  {
-    name: '週刊少年ジャンプ',
-    description: '週刊少年ジャンプは、集英社が発行する週刊少年漫画雑誌。',
-    image: IMAGE_PATHS[:shonen_jump],
-    user_id: 1,
-    publisher_id: 1
-  }
-]
-
-magazines_data.each do |magazine_data|
+MAGAZINE_DATA.each do |magazine_data|
   magazine = Magazine.create!(
     name: magazine_data[:name],
     description: magazine_data[:description],
@@ -88,27 +64,44 @@ magazines_data.each do |magazine_data|
   puts "\"#{magazine.name}\" has created!"
 end
 
-# 漫画を作成
-comics_data = [
-  {
-    title: 'HUNTER×HUNTER',
-    description: 'HUNTER×HUNTERは、冨樫義博による日本の漫画作品。',
-    image: IMAGE_PATHS[:hunter_x_hunter],
-    user_id: 1,
-    magazine_id: 1
-  }
-]
+# 著者を作成
+AUTHOR_DATA.each do |author_data|
+  author = Author.create!(
+    name: author_data[:name],
+    description: author_data[:description],
+    user_id: author_data[:user_id]
+  )
+  puts "\"#{author.name}\" has created!"
+end
 
-comics_data.each do |comic_data|
+# 漫画を作成
+COMIC_DATA.each do |comic_data|
   comic = Comic.create!(
     title: comic_data[:title],
     description: comic_data[:description],
     user_id: comic_data[:user_id],
-    magazine_id: comic_data[:magazine_id]
+    magazine_id: comic_data[:magazine_id],
+    author_id: comic_data[:author_id]
   )
   comic.comic_image.attach(
     io: File.open(comic_data[:image]),
     filename: File.basename(comic_data[:image])
   )
   puts "\"#{comic.title}\" has created!"
+end
+
+# クイズを作成
+QUIZ_DATA.each do |quiz_data|
+  quiz = Quiz.create!(
+    question: quiz_data[:question],
+    answer: quiz_data[:answer],
+    description: quiz_data[:description],
+    user_id: quiz_data[:user_id],
+    comic_id: quiz_data[:comic_id]
+  )
+  quiz.quiz_image.attach(
+    io: File.open(quiz_data[:image]),
+    filename: File.basename(quiz_data[:image])
+  )
+  puts "\"#{quiz.question}\" has created!"
 end

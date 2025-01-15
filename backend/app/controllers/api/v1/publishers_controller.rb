@@ -2,23 +2,13 @@ module Api
   module V1
     class PublishersController < ApplicationController
       def index
-        publishers = Publisher.all
+        publishers = Publisher.all.includes(:user)
         render json: publishers, each_serializer: Api::V1::PublisherSerializer
       end
 
       def show
-        publisher = Publisher.find(params[:id])
+        publisher = Publisher.includes(:user).find(params[:id])
         render json: publisher, serializer: Api::V1::PublisherSerializer
-      end
-
-      def update
-        publisher = Publisher.find(params[:id])
-
-        if publisher.update(publisher_params)
-          render json: publisher, serializer: Api::V1::PublisherSerializer
-        else
-          render json: { errors: publisher.errors }, status: :unprocessable_entity
-        end
       end
 
       def create
@@ -28,6 +18,22 @@ module Api
         else
           render json: { errors: publisher.errors }, status: :unprocessable_entity
         end
+      end
+
+      def update
+        publisher = Publisher.includes(:user).find(params[:id])
+
+        if publisher.update(publisher_params)
+          render json: publisher, serializer: Api::V1::PublisherSerializer
+        else
+          render json: { errors: publisher.errors }, status: :unprocessable_entity
+        end
+      end
+
+      def destroy
+        publisher = Publisher.find(params[:id])
+        publisher.destroy
+        render json: { message: '出版社が削除されました', success: true }
       end
 
       def publisher_image

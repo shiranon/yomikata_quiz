@@ -27,9 +27,9 @@ export const updateUser = async (formData: FormData) => {
 
   try {
     const validatedFields = UserFormScheme.parse(validationData)
-    console.log('Validation passed:', validatedFields)
+    console.log('バリデーション成功:', validatedFields)
   } catch (error) {
-    console.error('Validation failed:', error)
+    console.error('バリデーション失敗:', error)
     throw error
   }
 

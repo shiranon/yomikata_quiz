@@ -23,7 +23,7 @@ export const updatePublisher = async (formData: FormData) => {
   const validationData = {
     name: formData.get('publisher[name]')?.toString() ?? '',
     description: formData.get('publisher[description]')?.toString() ?? '',
-    publisher_image: formData.get('publisher[publisher_image]') as
+    publisherImage: formData.get('publisher[publisherImage]') as
       | File
       | undefined,
   }
@@ -31,9 +31,9 @@ export const updatePublisher = async (formData: FormData) => {
   // バリデーション実行
   try {
     const validatedFields = PublisherFormScheme.parse(validationData)
-    console.log('Validation passed:', validatedFields)
+    console.log('バリデーション成功:', validatedFields)
   } catch (error) {
-    console.error('Validation failed:', error)
+    console.error('バリデーション失敗:', error)
     throw error
   }
 

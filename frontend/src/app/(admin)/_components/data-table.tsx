@@ -4,7 +4,7 @@ import { Button } from 'components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { Colum } from '../_type/board'
+import { Colum, Comic, User } from '../_type/board'
 
 type Order = 'asc' | 'desc'
 
@@ -87,6 +87,17 @@ export const DataTable = <T extends Record<string, unknown>>({
   const tbodyContent = sortedRows.map((row, index) => {
     const cells = columns.map((col) => {
       const value = col.field in row ? row[col.field] : ''
+
+      if (col.field === 'user') {
+        const user = value as User
+        return <td key={col.field}>{user.name}</td>
+      }
+
+      if (col.field === 'comic') {
+        const comic = value as Comic
+        return <td key={col.field}>{comic.title}</td>
+      }
+
       const displayValue = formatValue(value, col.type)
       if (col.field === 'id') {
         return (

@@ -71,11 +71,10 @@ export async function handleSignIn(data: SigninFormValues) {
         message: 'ログインに失敗しました',
       }
     }
-    console.log(error)
     return {
       success: false,
       message: '予期せぬエラーが発生しました',
     }
   }
-  return redirect('/admin/index')
+  return redirect('/admin/quiz')
 }

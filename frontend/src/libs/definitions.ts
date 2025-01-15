@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const SignupFormScheme = z
+const SignupFormScheme = z
   .object({
     name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
     email: z
@@ -20,19 +20,7 @@ export const SignupFormScheme = z
     path: ['passwordConfirmation'],
   })
 
-export type SignupFormState =
-  | {
-      errors?: {
-        name?: string[]
-        email?: string[]
-        password?: string[]
-        passwordConfirmation?: string[]
-      }
-      message?: string
-    }
-  | undefined
-
-export const SigninFormScheme = z.object({
+const SigninFormScheme = z.object({
   email: z
     .string()
     .min(1, { message: 'メールアドレスを入力してください' })
@@ -43,17 +31,7 @@ export const SigninFormScheme = z.object({
     .trim(),
 })
 
-export type SigninFormState =
-  | {
-      errors?: {
-        email?: string[]
-        password?: string[]
-      }
-      message?: string
-    }
-  | undefined
-
-export const UserFormScheme = z.object({
+const UserFormScheme = z.object({
   name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
   email: z
     .string()
@@ -62,21 +40,10 @@ export const UserFormScheme = z.object({
   admin: z.preprocess((val) => val === 'true', z.boolean().default(false)),
 })
 
-export type UserFormState =
-  | {
-      errors?: {
-        name?: string[]
-        email?: string[]
-        admin?: string[]
-      }
-      message?: string
-    }
-  | undefined
-
-export const PublisherFormScheme = z.object({
+const PublisherFormScheme = z.object({
   name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
   description: z.string().min(2, { message: '説明が短すぎます' }).trim(),
-  publisher_image: z.union([
+  publisherImage: z.union([
     z
       .instanceof(File, { message: '画像ファイルを選択してください' })
       .refine((file) => file.size <= 5000000, {
@@ -91,13 +58,97 @@ export const PublisherFormScheme = z.object({
   ]),
 })
 
-export type PublisherFormState =
-  | {
-      errors?: {
-        name?: string[]
-        description?: string[]
-        publisher_image?: string[]
-      }
-      message?: string
-    }
-  | undefined
+const MagazineFormScheme = z.object({
+  name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
+  description: z.string().min(2, { message: '説明が短すぎます' }).trim(),
+  publisherId: z
+    .number({
+      required_error: '出版社を選択してください',
+      invalid_type_error: '出版社を選択してください',
+    })
+    .min(1, '出版社を選択してください'),
+  magazineImage: z.union([
+    z
+      .instanceof(File, { message: '画像ファイルを選択してください' })
+      .refine((file) => file.size <= 5000000, {
+        message: 'ファイルサイズは5MB以下にしてください',
+      })
+      .refine(
+        (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+        { message: 'jpeg, png, webp形式の画像を選択してください' },
+      ),
+    z.undefined(),
+    z.null(),
+  ]),
+})
+
+const AuthorFormScheme = z.object({
+  name: z.string().min(2, { message: '名前が短すぎます' }).trim(),
+  description: z.string().min(2, { message: '説明が短すぎます' }).trim(),
+})
+
+const ComicFormScheme = z.object({
+  title: z.string().min(2, { message: 'タイトルが短すぎます' }).trim(),
+  description: z.string().min(2, { message: '説明が短すぎます' }).trim(),
+  comicImage: z.union([
+    z
+      .instanceof(File, { message: '画像ファイルを選択してください' })
+      .refine((file) => file.size <= 5000000, {
+        message: 'ファイルサイズは5MB以下にしてください',
+      })
+      .refine(
+        (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+        { message: 'jpeg, png, webp形式の画像を選択してください' },
+      ),
+    z.undefined(),
+    z.null(),
+  ]),
+  authorId: z
+    .number({
+      required_error: '著者を選択してください',
+      invalid_type_error: '著者を選択してください',
+    })
+    .min(1, '著者を選択してください'),
+  magazineId: z
+    .number({
+      required_error: '雑誌を選択してください',
+      invalid_type_error: '雑誌を選択してください',
+    })
+    .min(1, '雑誌を選択してください'),
+})
+
+const QuizFormScheme = z.object({
+  question: z.string().min(2, { message: '問題文が短すぎます' }).trim(),
+  answer: z.string().min(2, { message: '答えが短すぎます' }).trim(),
+  description: z.string().min(2, { message: '説明が短すぎます' }).trim(),
+  comicId: z
+    .number({
+      required_error: '漫画を選択してください',
+      invalid_type_error: '漫画を選択してください',
+    })
+    .min(1, '漫画を選択してください'),
+  quizImage: z.union([
+    z
+      .instanceof(File, { message: '画像ファイルを選択してください' })
+      .refine((file) => file.size <= 5000000, {
+        message: 'ファイルサイズは5MB以下にしてください',
+      })
+      .refine(
+        (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+        { message: 'jpeg, png, webp形式の画像を選択してください' },
+      ),
+    z.undefined(),
+    z.null(),
+  ]),
+})
+
+export {
+  AuthorFormScheme,
+  ComicFormScheme,
+  MagazineFormScheme,
+  PublisherFormScheme,
+  QuizFormScheme,
+  SigninFormScheme,
+  SignupFormScheme,
+  UserFormScheme,
+}

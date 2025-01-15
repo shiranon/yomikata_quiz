@@ -5,6 +5,15 @@ module Api
 
       attributes :id, :name, :description, :user_id, :publisher_image_url, :created_at, :updated_at
 
+      attribute :user
+
+      def user
+        {
+          id: object.user.id,
+          name: object.user.name
+        }
+      end
+
       def publisher_image_url
         return nil unless object.publisher_image.attached?
 

@@ -20,11 +20,11 @@ export async function handleUpdateAdminPublisher(
     formData.append('publisher[name]', data.name.trim())
     formData.append('publisher[description]', data.description.trim())
 
-    if (data.publisher_image instanceof File) {
+    if (data.publisherImage instanceof File) {
       formData.append(
-        'publisher[publisher_image]',
-        data.publisher_image,
-        data.publisher_image.name,
+        'publisher[publisherImage]',
+        data.publisherImage,
+        data.publisherImage.name,
       )
     }
 

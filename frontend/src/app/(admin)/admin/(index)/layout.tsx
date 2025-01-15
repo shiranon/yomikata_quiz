@@ -1,5 +1,11 @@
 import { Header } from 'app/(admin)/_components/header'
 import { Side } from 'app/(admin)/_components/side'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Yomikata Quiz管理',
+  description: 'Yomikata Quiz管理',
+}
 
 export default async function AdminLayout({
   children,

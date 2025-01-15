@@ -1,4 +1,4 @@
-import { PublisherForm } from 'app/(admin)/_components/form/publisher-form'
+import { PublisherForm } from 'components/form/publisher-form'
 import { getPublisher } from 'libs/api/api-publishers'
 import { cachedValidateAuth } from 'libs/auth'
 import { redirect } from 'next/navigation'
