@@ -1,15 +1,10 @@
 'use client'
 
 import { Button } from 'components/ui/button'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-
-export type Colum = {
-  field: string
-  headerName: string
-  width?: number
-  type?: string
-}
+import { Colum, Comic, User } from '../_type/board'
 
 type Order = 'asc' | 'desc'
 
@@ -25,6 +20,15 @@ const formatValue = (value: unknown, type?: string) => {
       return dateStr.replace('T', ' ').split('.')[0]
     case 'boolean':
       return value ? '✓' : '✗'
+    case 'image_url':
+      return (
+        <Image
+          src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${value as string}`}
+          alt="publisher image"
+          width={100}
+          height={100}
+        />
+      )
     default:
       return String(value)
   }
@@ -83,13 +87,24 @@ export const DataTable = <T extends Record<string, unknown>>({
   const tbodyContent = sortedRows.map((row, index) => {
     const cells = columns.map((col) => {
       const value = col.field in row ? row[col.field] : ''
+
+      if (col.field === 'user') {
+        const user = value as User
+        return <td key={col.field}>{user.name}</td>
+      }
+
+      if (col.field === 'comic') {
+        const comic = value as Comic
+        return <td key={col.field}>{comic.title}</td>
+      }
+
       const displayValue = formatValue(value, col.type)
       if (col.field === 'id') {
         return (
           <td key={col.field}>
             <Link
               className="ml-1 p-2 bg-primary rounded-md text-white"
-              href={`/admin/user/${row.id}`}
+              href={`/admin/${col.path}/${row.id}`}
             >
               {displayValue}
             </Link>

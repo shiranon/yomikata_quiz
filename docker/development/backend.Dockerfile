@@ -11,6 +11,13 @@ RUN set -eux; \
   mkdir -p /app/backend/vendor/bundle; \
   chown -R backend:backend /app
 
+RUN apt-get update -qq && \
+  apt-get install -y build-essential \
+  libvips \
+  libvips-dev \
+  libvips-tools && \
+  rm -rf /var/lib/apt/lists/*
+
 USER backend
 
 WORKDIR /app/backend

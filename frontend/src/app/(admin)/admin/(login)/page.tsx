@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 export default async function Admin() {
   const user = await cachedValidateAuth()
   if (user?.data.admin) {
-    redirect('/admin/index')
+    redirect('/admin/quiz')
   }
   return (
     <div className="flex h-[70vh] flex-col items-center justify-center">

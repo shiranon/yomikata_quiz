@@ -17,29 +17,38 @@ export const Side = () => {
         <Link
           className={cn(
             sidebarClass,
-            adminPath.includes('/admin/user') && selectedClass,
+            adminPath.includes('/admin/quiz') && selectedClass,
           )}
-          href={'/admin/user'}
-        >
-          <div className="p-4">ユーザー</div>
-        </Link>
-        <Link
-          className={cn(
-            sidebarClass,
-            adminPath.includes('/admin/index') && selectedClass,
-          )}
-          href={'/admin/index'}
+          href={'/admin/quiz'}
         >
           <div className="p-4">クイズ</div>
         </Link>
         <Link
           className={cn(
             sidebarClass,
-            adminPath.includes('/admin/title') && selectedClass,
+            adminPath.includes('/admin/comic') && selectedClass,
           )}
-          href={'/admin/title'}
+          href={'/admin/comic'}
         >
-          <div className="p-4">タイトル</div>
+          <div className="p-4">漫画</div>
+        </Link>
+        <Link
+          className={cn(
+            sidebarClass,
+            adminPath.includes('/admin/author') && selectedClass,
+          )}
+          href={'/admin/author'}
+        >
+          <div className="p-4">著者</div>
+        </Link>
+        <Link
+          className={cn(
+            sidebarClass,
+            adminPath.includes('/admin/magazine') && selectedClass,
+          )}
+          href={'/admin/magazine'}
+        >
+          <div className="p-4">雑誌</div>
         </Link>
         <Link
           className={cn(
@@ -53,11 +62,11 @@ export const Side = () => {
         <Link
           className={cn(
             sidebarClass,
-            adminPath.includes('/admin/magazine') && selectedClass,
+            adminPath.includes('/admin/user') && selectedClass,
           )}
-          href={'/admin/magazine'}
+          href={'/admin/user'}
         >
-          <div className="p-4">雑誌</div>
+          <div className="p-4">ユーザー</div>
         </Link>
       </aside>
     </div>

@@ -5,38 +5,35 @@ import { signIn, signUp } from 'libs/api/api-auth'
 import { SigninFormScheme, SignupFormScheme } from 'libs/definitions'
 import { setSession } from 'libs/session'
 import { redirect } from 'next/navigation'
-import { FormSigninState, FormSignupState } from 'type/form'
+import { z } from 'zod'
+
+type SigninFormValues = z.infer<typeof SigninFormScheme>
+type SignupFormValues = z.infer<typeof SignupFormScheme>
+type ActionResponse = {
+  success: boolean
+  message: string
+}
 
 export async function handleSignUp(
-  prevState: FormSignupState,
-  formData: FormData,
-): Promise<FormSignupState> {
+  data: SignupFormValues,
+): Promise<ActionResponse> {
   try {
-    const validatedFields = SignupFormScheme.safeParse(
-      Object.fromEntries(formData),
-    )
+    const formData = new FormData()
+    formData.append('name', data.name.trim())
+    formData.append('email', data.email.trim())
+    formData.append('password', data.password.trim())
+    formData.append('passwordConfirmation', data.passwordConfirmation.trim())
 
-    if (!validatedFields.success) {
-      return {
-        ...prevState,
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: 'バリデーションエラーが発生しました',
-      }
-    }
-
-    // サインアップ処理
     await signUp(formData)
     return {
-      ...prevState,
-      errors: {},
+      success: true,
       message: '登録が完了しました',
     }
   } catch (error) {
     // Railsバリデーションエラー
     if (axios.isAxiosError(error) && error.response?.status === 422) {
       return {
-        ...prevState,
-        errors: error.response.data.errors,
+        success: false,
         message: 'APIエラーが発生しました',
       }
     }
@@ -44,58 +41,40 @@ export async function handleSignUp(
     // その他のエラー
     console.error('サインアップエラー:', error)
     return {
-      ...prevState,
-      errors: {},
+      success: false,
       message: '予期せぬエラーが発生しました',
     }
   }
 }
 
-export async function handleSignIn(
-  prevState: FormSigninState,
-  formData: FormData,
-): Promise<FormSigninState> {
+export async function handleSignIn(data: SigninFormValues) {
   try {
-    const validatedFields = SigninFormScheme.safeParse(
-      Object.fromEntries(formData),
-    )
-    if (!validatedFields.success) {
-      return {
-        ...prevState,
-        values: {
-          email: formData.get('email') as string,
-        },
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: 'バリデーションエラーが発生しました',
-      }
-    }
+    const formData = new FormData()
+    formData.append('email', data.email.trim())
+    formData.append('password', data.password.trim())
 
+    await signIn(formData)
     // サインイン処理
     const response = await signIn(formData)
     await setSession(response)
-    return redirect('/admin/index')
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 422) {
       return {
-        ...prevState,
-        errors: error.response.data.errors,
+        success: false,
         message: 'APIエラーが発生しました',
       }
     }
 
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       return {
-        ...prevState,
-        errors: {
-          login: ['メールアドレスまたはパスワードが間違っています'],
-        },
+        success: false,
         message: 'ログインに失敗しました',
       }
     }
     return {
-      ...prevState,
-      errors: {},
+      success: false,
       message: '予期せぬエラーが発生しました',
     }
   }
+  return redirect('/admin/quiz')
 }

@@ -1,35 +1,33 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from 'components/ui/button'
 import { Input } from 'components/ui/input'
 import { handleUpdateAdminUser } from 'libs/action/action-user'
 import { deleteUser } from 'libs/api/api-users'
+import { UserFormScheme } from 'libs/definitions'
 import { useRouter } from 'next/navigation'
-import { useActionState, useState } from 'react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { User } from 'type/auth'
-import { FormUserState, FormUserValues } from '../type/form'
+import { FormAdminUserValues } from 'type/form'
 
 export function UserForm({ userData }: { userData: User }) {
-  const initialState: FormUserState = {
-    errors: {},
-    message: '',
-    values: {
+  const [message, setMessage] = useState<string>('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormAdminUserValues>({
+    resolver: zodResolver(UserFormScheme),
+    defaultValues: {
       name: userData.name,
       email: userData.email,
       admin: userData.admin,
     },
-  }
-
-  const [state, dispatch] = useActionState(handleUpdateAdminUser, initialState)
-
-  const [formValue, setFormValue] = useState<FormUserValues>({
-    name: userData.name,
-    email: userData.email,
-    admin: userData.admin,
   })
 
   const router = useRouter()
-  const [error, setError] = useState<string>('')
 
   const handleDelete = async () => {
     if (!confirm('本当に削除してもよろしいですか？')) {
@@ -41,12 +39,17 @@ export function UserForm({ userData }: { userData: User }) {
       if (result.success) {
         router.push('/admin/user')
       } else {
-        setError(result.message)
+        setMessage(result.message)
       }
     } catch (err) {
       console.error('削除エラー:', err)
-      setError('削除に失敗しました')
+      setMessage('削除に失敗しました')
     }
+  }
+
+  const onSubmit = async (data: FormAdminUserValues) => {
+    const result = await handleUpdateAdminUser(data)
+    setMessage(result.message)
   }
 
   return (
@@ -54,49 +57,39 @@ export function UserForm({ userData }: { userData: User }) {
       <h1 className="text-2xl font-bold">ユーザー編集</h1>
       <form
         className="flex flex-col font-semibold"
-        action={dispatch}
+        onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
         <div className="w-full pt-5 flex items-center">
-          <label className="w-32 text-right pr-2 text-xs" htmlFor="name">
+          <label className="w-24 text-right pr-2 text-xs" htmlFor="name">
             名前
           </label>
           <div className="flex flex-wrap">
             <Input
               className="w-64"
               type="text"
-              name="name"
               id="name"
-              value={formValue.name}
-              onChange={(e) =>
-                setFormValue({ ...formValue, name: e.target.value })
-              }
+              {...register('name')}
             />
-            {state.errors?.name && (
-              <p className="text-red-400 text-xs pl-3">
-                {state.errors.name[0]}
-              </p>
+            {errors?.name && (
+              <p className="text-red-400 text-xs pl-3">{errors.name.message}</p>
             )}
           </div>
         </div>
         <div className="w-full pt-5 flex items-center">
-          <label className="w-32 text-right pr-2 text-xs" htmlFor="email">
+          <label className="w-24 text-right pr-2 text-xs" htmlFor="email">
             メールアドレス
           </label>
-          <div className="flex flex-wrap w-64">
+          <div className="flex flex-wrap">
             <Input
               className="w-64"
               type="email"
-              name="email"
               id="email"
-              value={formValue.email}
-              onChange={(e) =>
-                setFormValue({ ...formValue, email: e.target.value })
-              }
+              {...register('email')}
             />
-            {state.errors?.email && (
+            {errors?.email && (
               <p className="text-red-400 text-xs pl-3">
-                {state.errors.email[0]}
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -105,28 +98,24 @@ export function UserForm({ userData }: { userData: User }) {
           <label className="w-32 text-right pr-2 text-xs" htmlFor="admin">
             管理者権限
           </label>
-          <div className="flex flex-wrap w-64">
+          <div className="flex flex-wrap">
             <Input
               type="checkbox"
-              name="admin"
               id="admin"
-              checked={formValue.admin}
-              onChange={(e) =>
-                setFormValue({ ...formValue, admin: e.target.checked })
-              }
+              value="true"
+              {...register('admin')}
             />
-            {state.errors?.admin && (
+            {errors?.admin && (
               <p className="text-red-400 text-xs pl-3">
-                {state.errors.admin[0]}
+                {errors.admin.message}
               </p>
             )}
           </div>
         </div>
 
-        {state.message && (
-          <p className="text-green-400 text-xs pl-3 pb-3">{state.message}</p>
+        {message && (
+          <p className="text-green-400 text-xs pl-3 pb-3">{message}</p>
         )}
-        {error && <p className="text-red-400 text-xs pl-3 pb-3">{error}</p>}
         <div className="flex justify-center gap-5">
           <Button
             className="w-1/3"
