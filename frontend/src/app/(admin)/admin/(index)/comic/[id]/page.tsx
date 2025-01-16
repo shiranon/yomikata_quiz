@@ -2,19 +2,12 @@ import { ComicForm } from 'components/form/comic-form'
 import { getAuthors } from 'libs/api/api-author'
 import { getComic } from 'libs/api/api-comic'
 import { getMagazines } from 'libs/api/api-magazine'
-import { cachedValidateAuth } from 'libs/auth'
-import { redirect } from 'next/navigation'
 
 export default async function MagazinePage({
   params,
 }: {
   params: { id: string }
 }) {
-  const user = await cachedValidateAuth()
-  if (!user?.data.admin) {
-    redirect('/admin')
-  }
-
   const { id } = await params
 
   const comicData = await getComic(id)
