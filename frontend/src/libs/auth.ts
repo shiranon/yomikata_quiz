@@ -1,8 +1,8 @@
 import { cache } from 'react'
 import { getCurrentUser } from './api/api-auth'
 
-import { AuthInfo } from 'type/auth'
 import { AxiosRequestConfig } from 'axios'
+import { AuthInfo } from 'type/auth'
 import { getSession } from './session'
 
 export const setHeaderConfig = async () => {

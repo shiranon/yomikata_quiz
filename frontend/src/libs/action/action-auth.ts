@@ -2,8 +2,10 @@
 
 import axios from 'axios'
 import { signIn, signUp } from 'libs/api/api-auth'
+import { cachedValidateAuth } from 'libs/auth'
 import { SigninFormScheme, SignupFormScheme } from 'libs/definitions'
 import { setSession } from 'libs/session'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -48,6 +50,7 @@ export async function handleSignUp(
 }
 
 export async function handleSignIn(data: SigninFormValues) {
+  const requestUrl = (await headers()).get('x-url')
   try {
     const formData = new FormData()
     formData.append('email', data.email.trim())
@@ -76,5 +79,10 @@ export async function handleSignIn(data: SigninFormValues) {
       message: '予期せぬエラーが発生しました',
     }
   }
-  return redirect('/admin/quiz')
+  // 管理者かつadminページの場合はadmin/quizにリダイレクト
+  const user = await cachedValidateAuth()
+  if (requestUrl?.includes('/admin') && user?.data.admin) {
+    redirect('/admin/quiz')
+  }
+  return redirect('/')
 }

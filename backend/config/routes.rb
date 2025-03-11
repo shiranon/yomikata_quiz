@@ -27,6 +27,15 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :mylists, only: %i[index show create update destroy] do
+        member do
+          post 'add_quiz', to: 'mylists#add_quiz'
+          delete 'remove_quiz', to: 'mylists#remove_quiz'
+        end
+      end
+
+      get 'user/mylists', to: 'mylists#user_mylists'
+
       resources :users, only: %i[index show update destroy]
 
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {

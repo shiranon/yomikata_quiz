@@ -3,6 +3,15 @@ import applyCaseMiddleware from 'axios-case-converter'
 
 const options = {
   ignoreHeaders: true,
+  recursionLimit: 2, // 再帰の深さを制限
+  preserveSpecificKeys: {
+    // 特定のキーの変換を無視
+    quizzes: true,
+    mylists: true,
+    comic: true,
+    author: true,
+    user: true,
+  },
 }
 
 // クライアントサイド用
