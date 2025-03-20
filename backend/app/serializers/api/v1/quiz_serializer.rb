@@ -13,7 +13,7 @@ module Api
           title: object.comic.title,
           author: {
             id: object.comic.author_id,
-            name: object.comic.author&.name || "不明"
+            name: object.comic.author&.name || '不明'
           }
         }
       end

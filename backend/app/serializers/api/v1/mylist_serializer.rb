@@ -26,7 +26,7 @@ module Api
               title: quiz.comic.title,
               author: {
                 id: quiz.comic.author_id,
-                name: quiz.comic.author&.name || "不明"
+                name: quiz.comic.author&.name || '不明'
               }
             }
           }
