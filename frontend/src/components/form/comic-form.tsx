@@ -4,13 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Author, Comic, Magazine } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
 import { Input } from 'components/ui/input'
-import { handleUpdateAdminComic } from 'libs/action/action-comic'
+import { handleUpdateComic } from 'libs/action/action-comic'
 import { deleteComic } from 'libs/api/api-comic'
 import { ComicFormScheme } from 'libs/definitions'
 import { redirect, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FormAdminComicValues } from 'type/form'
+import { FormComicValues } from 'type/form'
 
 export function ComicForm({
   comicData,
@@ -26,7 +26,7 @@ export function ComicForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormAdminComicValues>({
+  } = useForm<FormComicValues>({
     resolver: zodResolver(ComicFormScheme),
     defaultValues: {
       title: comicData.title,
@@ -61,8 +61,8 @@ export function ComicForm({
     }
   }
 
-  const onSubmit = async (data: FormAdminComicValues) => {
-    const result = await handleUpdateAdminComic(data)
+  const onSubmit = async (data: FormComicValues) => {
+    const result = await handleUpdateComic(data)
     if (result.success) {
       redirect('/admin/comic')
     } else {

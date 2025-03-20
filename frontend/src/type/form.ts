@@ -10,31 +10,31 @@ type FormSigninValues = {
   password: string
 }
 
-type FormAdminUserValues = {
+type FormUserValues = {
   name: string
   email: string
   admin: boolean
 }
 
-type FormAdminPublisherValues = {
+type FormPublisherValues = {
   name: string
   description: string
   publisherImage?: File | null
 }
 
-type FormAdminMagazineValues = {
+type FormMagazineValues = {
   name: string
   description: string
   magazineImage?: File | null
   publisherId: number
 }
 
-type FormAdminAuthorValues = {
+type FormAuthorValues = {
   name: string
   description: string
 }
 
-type FormAdminComicValues = {
+type FormComicValues = {
   title: string
   description: string
   comicImage?: File | null
@@ -42,7 +42,7 @@ type FormAdminComicValues = {
   magazineId: number
 }
 
-type FormAdminQuizValues = {
+type FormQuizValues = {
   question: string
   answer: string
   description: string
@@ -51,12 +51,12 @@ type FormAdminQuizValues = {
 }
 
 export type {
-  FormAdminAuthorValues,
-  FormAdminComicValues,
-  FormAdminMagazineValues,
-  FormAdminPublisherValues,
-  FormAdminQuizValues,
-  FormAdminUserValues,
+  FormAuthorValues,
+  FormComicValues,
+  FormMagazineValues,
+  FormPublisherValues,
+  FormQuizValues,
   FormSigninValues,
   FormSignupValues,
+  FormUserValues,
 }

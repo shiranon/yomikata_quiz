@@ -1,10 +1,10 @@
-import { Quiz } from 'app/(admin)/_type/board'
-import { getQuizzes } from 'libs/api/api-quiz'
+import { getMylists } from 'libs/api/api-mylist'
+import { Quiz } from 'type/quiz'
 import QuizList from './quiz-list'
 
 export default async function QuizListPage() {
   try {
-    const response = await getQuizzes()
+    const response = await getMylists()
     const quizzes = response.data as Quiz[]
 
     return <QuizList quizzes={quizzes} />

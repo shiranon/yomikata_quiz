@@ -5,13 +5,13 @@ import { Publisher } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
 import { ImageUploader } from 'components/ui/image-upload'
 import { Input } from 'components/ui/input'
-import { handleUpdateAdminPublisher } from 'libs/action/action-publisher'
+import { handleUpdatePublisher } from 'libs/action/action-publisher'
 import { deletePublisher } from 'libs/api/api-publishers'
 import { PublisherFormScheme } from 'libs/definitions'
 import { redirect, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FormAdminPublisherValues } from 'type/form'
+import { FormPublisherValues } from 'type/form'
 
 export function PublisherForm({ publisherData }: { publisherData: Publisher }) {
   const [message, setMessage] = useState<string>('')
@@ -20,7 +20,7 @@ export function PublisherForm({ publisherData }: { publisherData: Publisher }) {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<FormAdminPublisherValues>({
+  } = useForm<FormPublisherValues>({
     resolver: zodResolver(PublisherFormScheme),
     defaultValues: {
       name: publisherData.name,
@@ -49,8 +49,8 @@ export function PublisherForm({ publisherData }: { publisherData: Publisher }) {
     }
   }
 
-  const onSubmit = async (data: FormAdminPublisherValues) => {
-    const result = await handleUpdateAdminPublisher(data)
+  const onSubmit = async (data: FormPublisherValues) => {
+    const result = await handleUpdatePublisher(data)
     if (result.success) {
       redirect('/admin/publisher')
     } else {

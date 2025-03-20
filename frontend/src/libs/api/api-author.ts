@@ -20,3 +20,9 @@ export const updateAuthor = async (formData: FormData) => {
   const config = await setHeaderConfig()
   return client.put('/authors', formData, config)
 }
+
+// 作者を削除
+export const deleteAuthor = async (id: string) => {
+  const config = await setHeaderConfig()
+  return client.delete(`/authors/${id}`, config)
+}

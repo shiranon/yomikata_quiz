@@ -1,8 +1,12 @@
 import { getQuiz } from 'libs/api/api-quiz'
-import { Quiz } from 'app/(admin)/_type/board'
+import { Quiz } from 'type/quiz'
 import QuizDetail from './quiz-detail'
 
-export default async function QuizDetailPage({ params }: { params: { id: string } }) {
+export default async function QuizDetailPage({
+  params,
+}: {
+  params: { id: string }
+}) {
   try {
     const response = await getQuiz(params.id)
     const quiz = response.data as Quiz

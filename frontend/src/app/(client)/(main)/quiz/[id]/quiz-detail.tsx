@@ -1,11 +1,11 @@
 'use client'
 
-import { Quiz } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
 import { Input } from 'components/ui/input'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { Quiz } from 'type/quiz'
 
 interface QuizDetailProps {
   quiz: Quiz

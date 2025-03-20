@@ -4,13 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Author } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
 import { Input } from 'components/ui/input'
-import { handleUpdateAdminAuthor } from 'libs/action/action-author'
+import { handleUpdateAuthor } from 'libs/action/action-author'
 import { deleteAuthor } from 'libs/api/api-author'
 import { AuthorFormScheme } from 'libs/definitions'
 import { redirect, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FormAdminAuthorValues } from 'type/form'
+import { FormAuthorValues } from 'type/form'
 
 export function AuthorForm({ authorData }: { authorData: Author }) {
   const [message, setMessage] = useState<string>('')
@@ -18,7 +18,7 @@ export function AuthorForm({ authorData }: { authorData: Author }) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormAdminAuthorValues>({
+  } = useForm<FormAuthorValues>({
     resolver: zodResolver(AuthorFormScheme),
     defaultValues: {
       name: authorData.name,
@@ -37,10 +37,10 @@ export function AuthorForm({ authorData }: { authorData: Author }) {
 
     try {
       const result = await deleteAuthor(authorData.id.toString())
-      if (result.success) {
+      if (result.data && result.data.success) {
         router.push('/admin/magazine')
       } else {
-        setError(result.message)
+        setError(result.data?.message || '削除に失敗しました')
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -51,8 +51,8 @@ export function AuthorForm({ authorData }: { authorData: Author }) {
     }
   }
 
-  const onSubmit = async (data: FormAdminAuthorValues) => {
-    const result = await handleUpdateAdminAuthor(data)
+  const onSubmit = async (data: FormAuthorValues) => {
+    const result = await handleUpdateAuthor(data)
     if (result.success) {
       redirect('/admin/author')
     } else {

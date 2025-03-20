@@ -1,7 +1,7 @@
 'use server'
 
 import { addQuizToMylist, createMylist } from '../api/api-mylist'
-import { createQuiz } from '../api/api-quiz'
+import { createQuiz, updateQuiz } from '../api/api-quiz'
 
 type CreateQuizFormData = {
   title: string
@@ -14,6 +14,15 @@ type CreateQuizFormData = {
     comicId: string
     quizImage?: File
   }[]
+}
+
+type UpdateQuizFormData = {
+  id: number
+  question: string
+  answer: string
+  description: string
+  quizImage?: File | null
+  comicId: number
 }
 
 type ActionResponse = {
@@ -100,6 +109,46 @@ export async function handleCreateQuiz(
     }
   } catch (error) {
     console.error('クイズ作成エラー:', error)
+    return {
+      success: false,
+      message: '予期せぬエラーが発生しました',
+    }
+  }
+}
+
+export async function handleUpdateQuiz(
+  data: UpdateQuizFormData,
+): Promise<ActionResponse> {
+  try {
+    console.log('クイズ更新開始:', data)
+
+    // FormDataオブジェクトを作成
+    const formData = new FormData()
+    formData.append('quiz[question]', data.question)
+    formData.append('quiz[answer]', data.answer)
+    formData.append('quiz[description]', data.description || '')
+    formData.append('quiz[comic_id]', data.comicId.toString())
+
+    if (data.quizImage) {
+      formData.append('quiz[quiz_image]', data.quizImage)
+    }
+
+    const response = await updateQuiz(data.id.toString(), formData)
+    console.log('クイズ更新結果:', response)
+
+    if (!response.data) {
+      return {
+        success: false,
+        message: 'クイズの更新に失敗しました',
+      }
+    }
+
+    return {
+      success: true,
+      message: 'クイズの更新が完了しました',
+    }
+  } catch (error) {
+    console.error('クイズ更新エラー:', error)
     return {
       success: false,
       message: '予期せぬエラーが発生しました',

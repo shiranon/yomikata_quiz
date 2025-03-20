@@ -1,9 +1,8 @@
 'use client'
 
-import { Quiz } from 'app/(admin)/_type/board'
 import Image from 'next/image'
 import Link from 'next/link'
-
+import { Quiz } from 'type/quiz'
 interface QuizListProps {
   quizzes: Quiz[]
 }

@@ -5,13 +5,13 @@ import { Comic, Quiz } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
 import { ImageUploader } from 'components/ui/image-upload'
 import { Input } from 'components/ui/input'
-import { handleUpdateAdminQuiz } from 'libs/action/action-quiz'
+import { handleUpdateQuiz } from 'libs/action/action-quiz'
 import { deleteQuiz } from 'libs/api/api-quiz'
 import { QuizFormScheme } from 'libs/definitions'
 import { redirect, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FormAdminQuizValues } from 'type/form'
+import { FormQuizValues } from 'type/form'
 
 export function QuizForm({
   quizData,
@@ -26,7 +26,7 @@ export function QuizForm({
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<FormAdminQuizValues>({
+  } = useForm<FormQuizValues>({
     resolver: zodResolver(QuizFormScheme),
     defaultValues: {
       question: quizData.question,
@@ -47,10 +47,10 @@ export function QuizForm({
 
     try {
       const result = await deleteQuiz(quizData.id.toString())
-      if (result.success) {
+      if (result.data && result.data.success) {
         router.push('/admin/quiz')
       } else {
-        setError(result.message)
+        setError(result.data?.message || '削除に失敗しました')
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -61,8 +61,11 @@ export function QuizForm({
     }
   }
 
-  const onSubmit = async (data: FormAdminQuizValues) => {
-    const result = await handleUpdateAdminQuiz(data)
+  const onSubmit = async (data: FormQuizValues) => {
+    const result = await handleUpdateQuiz({
+      ...data,
+      id: quizData.id,
+    })
     console.log(result)
     if (result.success) {
       redirect('/admin/quiz')
