@@ -3,12 +3,12 @@ module Api
     class QuizzesController < ApplicationController
       def index
         quizzes = Quiz.all
-        render json: quizzes
+        render json: quizzes, each_serializer: Api::V1::QuizSerializer
       end
 
       def show
         quiz = Quiz.includes(:user).find(params[:id])
-        render json: quiz
+        render json: quiz, serializer: Api::V1::QuizSerializer
       end
 
       def create

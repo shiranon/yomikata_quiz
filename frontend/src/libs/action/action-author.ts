@@ -12,7 +12,7 @@ type ActionResponse = {
   message: string
 }
 
-export async function handleUpdateAdminAuthor(
+export async function handleUpdateAuthor(
   data: FormValues,
 ): Promise<ActionResponse> {
   try {

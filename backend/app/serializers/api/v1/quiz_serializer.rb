@@ -10,7 +10,11 @@ module Api
       def comic
         {
           id: object.comic.id,
-          title: object.comic.title
+          title: object.comic.title,
+          author: {
+            id: object.comic.author_id,
+            name: object.comic.author&.name || '不明'
+          }
         }
       end
 

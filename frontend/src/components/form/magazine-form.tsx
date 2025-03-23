@@ -5,13 +5,13 @@ import { Magazine, Publisher } from 'app/(admin)/_type/board'
 import { Button } from 'components/ui/button'
 import { ImageUploader } from 'components/ui/image-upload'
 import { Input } from 'components/ui/input'
-import { handleUpdateAdminMagazine } from 'libs/action/action-magazine'
+import { handleUpdateMagazine } from 'libs/action/action-magazine'
 import { deleteMagazine } from 'libs/api/api-magazine'
 import { MagazineFormScheme } from 'libs/definitions'
 import { redirect, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FormAdminMagazineValues } from 'type/form'
+import { FormMagazineValues } from 'type/form'
 
 export function MagazineForm({
   magazineData,
@@ -26,7 +26,7 @@ export function MagazineForm({
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<FormAdminMagazineValues>({
+  } = useForm<FormMagazineValues>({
     resolver: zodResolver(MagazineFormScheme),
     defaultValues: {
       name: magazineData.name,
@@ -46,10 +46,10 @@ export function MagazineForm({
 
     try {
       const result = await deleteMagazine(magazineData.id.toString())
-      if (result.success) {
+      if (result.data && result.data.success) {
         router.push('/admin/magazine')
       } else {
-        setError(result.message)
+        setError(result.data?.message || '削除に失敗しました')
       }
     } catch (err) {
       console.error('削除エラー:', err)
@@ -57,8 +57,8 @@ export function MagazineForm({
     }
   }
 
-  const onSubmit = async (data: FormAdminMagazineValues) => {
-    const result = await handleUpdateAdminMagazine(data)
+  const onSubmit = async (data: FormMagazineValues) => {
+    const result = await handleUpdateMagazine(data)
     if (result.success) {
       redirect('/admin/magazine')
     } else {

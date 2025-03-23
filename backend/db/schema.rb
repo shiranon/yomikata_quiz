@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 20_250_112_060_123) do
+ActiveRecord::Schema[7.1].define(version: 20_250_119_084_645) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
@@ -77,6 +77,25 @@ ActiveRecord::Schema[7.1].define(version: 20_250_112_060_123) do
     t.index ['user_id'], name: 'index_magazines_on_user_id'
   end
 
+  create_table 'mylist_quizzes', force: :cascade do |t|
+    t.bigint 'mylist_id', null: false
+    t.bigint 'quiz_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['mylist_id'], name: 'index_mylist_quizzes_on_mylist_id'
+    t.index ['quiz_id'], name: 'index_mylist_quizzes_on_quiz_id'
+  end
+
+  create_table 'mylists', force: :cascade do |t|
+    t.string 'title', null: false
+    t.string 'description'
+    t.boolean 'is_public', default: false, null: false
+    t.bigint 'user_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['user_id'], name: 'index_mylists_on_user_id'
+  end
+
   create_table 'publishers', force: :cascade do |t|
     t.string 'name', null: false
     t.string 'description'
@@ -133,6 +152,9 @@ ActiveRecord::Schema[7.1].define(version: 20_250_112_060_123) do
   add_foreign_key 'comics', 'users'
   add_foreign_key 'magazines', 'publishers'
   add_foreign_key 'magazines', 'users'
+  add_foreign_key 'mylist_quizzes', 'mylists'
+  add_foreign_key 'mylist_quizzes', 'quizzes'
+  add_foreign_key 'mylists', 'users'
   add_foreign_key 'publishers', 'users'
   add_foreign_key 'quizzes', 'comics'
   add_foreign_key 'quizzes', 'users'

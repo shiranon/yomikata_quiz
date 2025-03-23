@@ -105,3 +105,20 @@ QUIZ_DATA.each do |quiz_data|
   )
   puts "\"#{quiz.question}\" has created!"
 end
+
+# マイリストを作成
+MYLIST_DATA.each do |mylist_data|
+  mylist = Mylist.create!(
+    title: mylist_data[:title],
+    description: mylist_data[:description],
+    user_id: mylist_data[:user_id]
+  )
+  puts "\"#{mylist.title}\" has created!"
+
+  # クイズを関連付ける
+  next unless mylist_data[:quiz_ids].present?
+
+  mylist_data[:quiz_ids].each do |quiz_id|
+    mylist.mylist_quizzes.create!(quiz_id: quiz_id)
+  end
+end

@@ -3,14 +3,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from 'components/ui/button'
 import { Input } from 'components/ui/input'
-import { handleUpdateAdminUser } from 'libs/action/action-user'
+import { handleUpdateUser } from 'libs/action/action-user'
 import { deleteUser } from 'libs/api/api-users'
 import { UserFormScheme } from 'libs/definitions'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { User } from 'type/auth'
-import { FormAdminUserValues } from 'type/form'
+import { FormUserValues } from 'type/form'
 
 export function UserForm({ userData }: { userData: User }) {
   const [message, setMessage] = useState<string>('')
@@ -18,7 +18,7 @@ export function UserForm({ userData }: { userData: User }) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormAdminUserValues>({
+  } = useForm<FormUserValues>({
     resolver: zodResolver(UserFormScheme),
     defaultValues: {
       name: userData.name,
@@ -47,8 +47,8 @@ export function UserForm({ userData }: { userData: User }) {
     }
   }
 
-  const onSubmit = async (data: FormAdminUserValues) => {
-    const result = await handleUpdateAdminUser(data)
+  const onSubmit = async (data: FormUserValues) => {
+    const result = await handleUpdateUser(data)
     setMessage(result.message)
   }
 
