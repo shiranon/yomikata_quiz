@@ -3,7 +3,6 @@ module Api
     class QuizzesController < ApplicationController
       def index
         quizzes = Quiz.all
-        pp 'ここ', quizzes
         render json: quizzes, each_serializer: Api::V1::QuizSerializer
       end
 

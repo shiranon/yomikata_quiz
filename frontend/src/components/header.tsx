@@ -28,10 +28,14 @@ export function Header({ user }: { user: AuthInfo | null }) {
               <Link href="/quiz">クイズ</Link>
             </div>
             <span className="text-2xl">/</span>
-            <div className="p-2 font-bold hover:underline">
-              <Link href="/quiz/create">クイズを作る</Link>
-            </div>
-            <span className="text-2xl">/</span>
+            {user ? (
+              <>
+                <div className="p-2 font-bold hover:underline">
+                  <Link href="/quiz/create">クイズを作る</Link>
+                </div>
+                <span className="text-2xl">/</span>
+              </>
+            ) : null}
             <div className="p-2 font-bold hover:underline">
               <Link href="/quiz/search">クイズを探す</Link>
             </div>

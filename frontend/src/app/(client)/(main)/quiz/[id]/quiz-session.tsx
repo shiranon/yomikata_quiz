@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MyQuizList, Quiz } from 'type/quiz'
 
+import { AnimatedContainer } from 'components/quiz/animated-container'
 import { QuizDetail } from 'components/quiz/quiz-detail'
 import { Button } from 'components/ui/button'
-import Image from 'next/image'
+import { ImageHeightFix } from 'components/ui/image-size-fix'
 
 interface QuizSessionProps {
   myQuizList: MyQuizList
@@ -108,8 +109,8 @@ export default function QuizSession({ myQuizList }: QuizSessionProps) {
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-        <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden mb-2">
+        <div className="px-6 pt-6 pb-2">
           <h1 className="text-2xl font-bold mb-2">{myQuizList.title}</h1>
           <p className="text-gray-600 mb-4">{myQuizList.description}</p>
 
@@ -134,21 +135,21 @@ export default function QuizSession({ myQuizList }: QuizSessionProps) {
       {!isSessionComplete ? (
         <>
           {/* 現在のクイズ */}
-          <QuizDetail
-            quiz={currentQuiz}
-            onAnswerSubmit={handleAnswerSubmit}
-            showAnswerImmediately={!!currentResult}
-            userAnswerProp={currentResult?.userAnswer}
-            isCorrectProp={currentResult?.isCorrect || null}
-          />
+          <AnimatedContainer isVisible={true} id={currentQuiz.id}>
+            <QuizDetail
+              quiz={currentQuiz}
+              onAnswerSubmit={handleAnswerSubmit}
+              showAnswerImmediately={!!currentResult}
+              userAnswerProp={currentResult?.userAnswer}
+              isCorrectProp={currentResult?.isCorrect || null}
+            />
+          </AnimatedContainer>
 
           {/* ナビゲーションボタン */}
-          {getCurrentQuizResult() && (
-            <div className="fixed bottom-6 right-[25%] flex justify-center mt-6">
-              <Button onClick={handleNext}>
-                {currentQuizIndex < totalQuizzes - 1
-                  ? '次の問題へ'
-                  : '結果を見る'}
+          {getCurrentQuizResult() && currentQuizIndex === totalQuizzes - 1 && (
+            <div className="fixed bottom-6 right-[15%] flex justify-center mt-6">
+              <Button onClick={handleNext} variant="secondary">
+                結果を見る
               </Button>
             </div>
           )}
@@ -160,9 +161,7 @@ export default function QuizSession({ myQuizList }: QuizSessionProps) {
             <h2 className="text-xl font-bold mb-4">結果一覧</h2>
             <div className="mb-6 text-center">
               <p className="text-lg">
-                正解数:{' '}
-                <span className="font-bold text-green-600">{correctCount}</span>{' '}
-                / {totalQuizzes}（
+                正解数: <span>{correctCount}</span> / {totalQuizzes}（
                 {Math.round((correctCount / totalQuizzes) * 100)}%）
               </p>
             </div>
@@ -177,42 +176,41 @@ export default function QuizSession({ myQuizList }: QuizSessionProps) {
                     <h3 className="font-medium">問題 {index + 1}</h3>
                   </div>
                   <div className="p-4">
-                    <p className="font-medium mb-2">{result.quiz.question}</p>
                     <div className="mb-2">
                       {result.quiz.quizImageUrl && (
-                        <div className="relative w-full h-40 mb-3 bg-gray-100 rounded-lg overflow-hidden">
-                          <Image
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${result.quiz.quizImageUrl}`}
-                            alt="クイズ画像"
-                            fill
-                            className="object-contain"
-                          />
+                        <ImageHeightFix
+                          imageUrl={`${process.env.NEXT_PUBLIC_BACKEND_URL}${result.quiz.quizImageUrl}`}
+                          fixedHeight={200}
+                        />
+                      )}
+                    </div>
+                    <p className="text-xl text-primary-dark text-center font-bold">
+                      {result.quiz.question}
+                    </p>
+                    <p className="text-2xl mb-3 text-center font-bold">
+                      正解: {result.quiz.answer}
+                    </p>
+                    <div className="w-[70%] mx-auto">
+                      <div
+                        className={`p-3 rounded-lg ${
+                          result.isCorrect
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        <p>
+                          <span className="font-medium">あなたの回答: </span>
+                          {result.userAnswer}
+                        </p>
+                      </div>
+                      {result.quiz.description && (
+                        <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                          <p className="text-sm text-gray-700">
+                            解説: {result.quiz.description}
+                          </p>
                         </div>
                       )}
                     </div>
-                    <div
-                      className={`p-3 rounded-lg ${
-                        result.isCorrect
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      <p>
-                        <span className="font-medium">あなたの回答: </span>
-                        {result.userAnswer}
-                      </p>
-                      <p>
-                        <span className="font-medium">正解: </span>
-                        {result.quiz.answer}
-                      </p>
-                    </div>
-                    {result.quiz.description && (
-                      <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-700">
-                          {result.quiz.description}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}

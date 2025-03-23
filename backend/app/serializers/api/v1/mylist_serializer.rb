@@ -27,6 +27,10 @@ module Api
               author: {
                 id: quiz.comic.author_id,
                 name: quiz.comic.author&.name || '不明'
+              },
+              magazine: {
+                id: quiz.comic.magazine_id,
+                name: quiz.comic.magazine&.name || '不明'
               }
             }
           }
