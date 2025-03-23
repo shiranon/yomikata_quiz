@@ -60,4 +60,15 @@ type Quiz = {
   comic: Comic
 }
 
-export type { Author, Comic, Magazine, Publisher, Quiz, User }
+type MyQuizList = {
+  id: number
+  title: string
+  description: string
+  isPublic: boolean
+  createdAt: Date
+  updatedAt: Date
+  user: User
+  quizzes: Quiz[]
+}
+
+export type { Author, Comic, Magazine, Publisher, Quiz, MyQuizList, User }
